@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using TestProjectUseRefreshToken.Helpers;
-using WebApi.Helpers;
+using TestProjectUseRefreshToken.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +13,11 @@ builder.Services.AddControllers().AddJsonOptions(x =>
     // serialize enums as strings in api responses (e.g. Role)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+// configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+// configure DI for application services
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 

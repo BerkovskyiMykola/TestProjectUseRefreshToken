@@ -1,4 +1,4 @@
-namespace WebApi.Helpers;
+namespace TestProjectUseRefreshToken.Helpers;
 
 public class AppSettings
 {
