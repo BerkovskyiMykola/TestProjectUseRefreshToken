@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TestProjectUseRefreshToken.Authorization;
 
 namespace TestProjectUseRefreshToken.Controllers
 {
@@ -18,6 +19,7 @@ namespace TestProjectUseRefreshToken.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
