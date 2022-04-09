@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using TestProjectUseRefreshToken.Authorization;
 using TestProjectUseRefreshToken.Helpers;
 using TestProjectUseRefreshToken.Services.Email;
 
@@ -18,6 +19,7 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 
 // configure DI for application services
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 
 var app = builder.Build();
 

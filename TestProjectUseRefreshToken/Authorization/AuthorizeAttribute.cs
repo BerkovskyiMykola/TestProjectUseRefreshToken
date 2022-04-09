@@ -26,7 +26,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         }
         else if (account != null && _roles.Any() && !_roles.Contains(account.Role))
         {
-            // logged in and role not 
+            //logged in and role not suitable
             context.Result = new JsonResult(new { message = "Forbidden" }) { StatusCode = StatusCodes.Status403Forbidden };
         }
     }
