@@ -60,7 +60,7 @@ public class JwtUtils : IJwtUtils
         return refreshToken;
     }
 
-    public Guid? ValidateJwtToken(string token)
+    public Guid? ValidateJwtToken(string? token)
     {
         if (token == null)
             return null;

@@ -34,6 +34,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// custom jwt auth middleware
+app.UseMiddleware<JwtMiddleware>();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
