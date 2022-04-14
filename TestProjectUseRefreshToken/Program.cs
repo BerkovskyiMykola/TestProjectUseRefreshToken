@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using TestProjectUseRefreshToken.Authorization;
 using TestProjectUseRefreshToken.Helpers;
+using TestProjectUseRefreshToken.Services.Account;
 using TestProjectUseRefreshToken.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,18 +13,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddCors();
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
     // serialize enums as strings in api responses (e.g. Role)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // configure DI for application services
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
+// swagger
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,6 +93,13 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// global cors policy
+app.UseCors(x => x
+    .SetIsOriginAllowed(origin => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

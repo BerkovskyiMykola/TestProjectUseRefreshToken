@@ -1,4 +1,5 @@
-﻿using TestProjectUseRefreshToken.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using TestProjectUseRefreshToken.Helpers;
 
 namespace TestProjectUseRefreshToken.Authorization;
 
@@ -18,7 +19,7 @@ public class JwtMiddleware
         if (accountId != null)
         {
             // attach account to context on successful jwt validation
-            context.Items["Account"] = await dataContext.Accounts.FindAsync(accountId.Value);
+            context.Items["Account"] = await dataContext.Accounts.Include(x => x.RefreshTokens).SingleOrDefaultAsync(x => x.Id == accountId.Value);
         }
 
         await _next(context);
