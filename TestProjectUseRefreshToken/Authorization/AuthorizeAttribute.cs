@@ -11,7 +11,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
     public AuthorizeAttribute(params Role[] roles)
     {
-        _roles = roles ?? Array.Empty<Role>();
+        _roles = roles;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -21,13 +21,13 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
         if (account == null)
         {
-            // not logged in or role not authorized
-            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            // not logged in
+            context.Result = new UnauthorizedResult();
         }
-        else if (account != null && _roles.Any() && !_roles.Contains(account.Role))
+        else if (_roles.Any() && !_roles.Contains(account.Role))
         {
             //logged in and role not suitable
-            context.Result = new JsonResult(new { message = "Forbidden" }) { StatusCode = StatusCodes.Status403Forbidden };
+            context.Result = new ForbidResult();
         }
     }
 }
