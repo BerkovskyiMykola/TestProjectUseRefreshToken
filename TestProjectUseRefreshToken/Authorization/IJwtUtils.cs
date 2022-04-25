@@ -6,5 +6,5 @@ public interface IJwtUtils
 {
     string GenerateJwtToken(Account account);
     Guid? ValidateJwtToken(string? token);
-    RefreshToken GenerateRefreshToken(string ipAddress);
+    Task<RefreshToken> GenerateRefreshTokenAsync(string ipAddress);
 }

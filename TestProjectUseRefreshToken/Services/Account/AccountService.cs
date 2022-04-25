@@ -48,7 +48,7 @@ public class AccountService : IAccountService
 
         // authentication successful so generate jwt and refresh tokens
         var jwtToken = _jwtUtils.GenerateJwtToken(account);
-        var refreshToken = _jwtUtils.GenerateRefreshToken(ipAddress);
+        var refreshToken = await _jwtUtils.GenerateRefreshTokenAsync(ipAddress);
         account.RefreshTokens.Add(refreshToken);
 
         // remove old refresh tokens from account
@@ -83,7 +83,7 @@ public class AccountService : IAccountService
         }
 
         // replace old refresh token with a new one (rotate token)
-        var newRefreshToken = RotateRefreshToken(refreshToken, ipAddress);
+        var newRefreshToken = await RotateRefreshTokenAsync(refreshToken, ipAddress);
         account.RefreshTokens.Add(newRefreshToken);
 
         // remove old refresh tokens from account
@@ -322,9 +322,9 @@ public class AccountService : IAccountService
         }
     }
 
-    private RefreshToken RotateRefreshToken(RefreshToken refreshToken, string ipAddress)
+    private async Task<RefreshToken> RotateRefreshTokenAsync(RefreshToken refreshToken, string ipAddress)
     {
-        var newRefreshToken = _jwtUtils.GenerateRefreshToken(ipAddress);
+        var newRefreshToken = await _jwtUtils.GenerateRefreshTokenAsync(ipAddress);
         RevokeRefreshToken(refreshToken, ipAddress, "Replaced by new token", newRefreshToken.Token);
         return newRefreshToken;
     }

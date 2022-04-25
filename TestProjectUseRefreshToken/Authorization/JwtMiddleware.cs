@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TestProjectUseRefreshToken.Helpers;
+﻿namespace TestProjectUseRefreshToken.Authorization;
 
-namespace TestProjectUseRefreshToken.Authorization;
+using Microsoft.EntityFrameworkCore;
+using TestProjectUseRefreshToken.Helpers;
 
 public class JwtMiddleware
 {

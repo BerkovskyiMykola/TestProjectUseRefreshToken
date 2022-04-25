@@ -1,5 +1,6 @@
 ﻿namespace TestProjectUseRefreshToken.Authorization;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -39,7 +40,7 @@ public class JwtUtils : IJwtUtils
         return tokenHandler.WriteToken(token);
     }
 
-    public RefreshToken GenerateRefreshToken(string ipAddress)
+    public async Task<RefreshToken> GenerateRefreshTokenAsync(string ipAddress)
     {
         var refreshToken = new RefreshToken
         {
@@ -52,10 +53,10 @@ public class JwtUtils : IJwtUtils
         };
 
         // ensure token is unique by checking against db
-        var tokenIsUnique = !_context.Accounts.Any(a => a.RefreshTokens.Any(t => t.Token == refreshToken.Token));
+        var tokenIsUnique = !await _context.Accounts.AnyAsync(a => a.RefreshTokens.Any(t => t.Token == refreshToken.Token));
 
         if (!tokenIsUnique)
-            return GenerateRefreshToken(ipAddress);
+            return await GenerateRefreshTokenAsync(ipAddress);
 
         return refreshToken;
     }
@@ -79,8 +80,8 @@ public class JwtUtils : IJwtUtils
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
 
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var accountId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+            var jwtToken = validatedToken as JwtSecurityToken;
+            var accountId = Guid.Parse(jwtToken!.Claims.First(x => x.Type == "id").Value);
 
             // return account id from JWT token if validation successful
             return accountId;
