@@ -61,16 +61,13 @@ public class JwtUtils : IJwtUtils
         return refreshToken;
     }
 
-    public Guid? ValidateJwtToken(string? token)
+    public async Task<Guid?> ValidateJwtTokenAsync(string token)
     {
-        if (token == null)
-            return null;
-
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
         try
         {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            var result = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -78,13 +75,11 @@ public class JwtUtils : IJwtUtils
                 ValidateAudience = false,
                 // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                 ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = validatedToken as JwtSecurityToken;
-            var accountId = Guid.Parse(jwtToken!.Claims.First(x => x.Type == "id").Value);
+            });
+            var id = result.Claims.First(x => x.Key == "id").Value as string;
 
             // return account id from JWT token if validation successful
-            return accountId;
+            return id == null ? null : Guid.Parse(id);
         }
         catch
         {

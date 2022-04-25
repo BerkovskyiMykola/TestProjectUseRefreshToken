@@ -15,14 +15,18 @@ public class JwtMiddleware
     public async Task Invoke(HttpContext context, DataContext dataContext, IJwtUtils jwtUtils)
     {
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-        var accountId = jwtUtils.ValidateJwtToken(token);
-
-        if (accountId != null)
+        
+        if(token != null)
         {
-            // attach account to context on successful jwt validation
-            context.Items["Account"] = await dataContext.Accounts
-                .Include(x => x.RefreshTokens)
-                .SingleOrDefaultAsync(x => x.Id == accountId);
+            var accountId = await jwtUtils.ValidateJwtTokenAsync(token);
+
+            if (accountId != null)
+            {
+                // attach account to context on successful jwt validation
+                context.Items["Account"] = await dataContext.Accounts
+                    .Include(x => x.RefreshTokens)
+                    .SingleOrDefaultAsync(x => x.Id == accountId);
+            }
         }
 
         await _next(context);
