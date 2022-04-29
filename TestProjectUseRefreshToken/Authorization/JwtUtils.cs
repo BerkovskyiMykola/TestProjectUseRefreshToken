@@ -76,10 +76,9 @@ public class JwtUtils : IJwtUtils
                 // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                 ClockSkew = TimeSpan.Zero
             });
-            var id = result.Claims.First(x => x.Key == "id").Value as string;
 
             // return account id from JWT token if validation successful
-            return id == null ? null : Guid.Parse(id);
+            return result.Claims.First(x => x.Key == "id").Value is not string id ? null : Guid.Parse(id);
         }
         catch
         {
