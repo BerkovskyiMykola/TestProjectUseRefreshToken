@@ -142,8 +142,8 @@ public class AccountService : IAccountService
         account.PasswordHash = BCrypt.HashPassword(model.Password);
 
         // save account
-        _context.Accounts.Add(account);
-        _context.SaveChanges();
+        await _context.Accounts.AddAsync(account);
+        await _context.SaveChangesAsync();
 
         // send email
         await SendVerificationEmailAsync(account, origin);
@@ -293,7 +293,7 @@ public class AccountService : IAccountService
         // recursively traverse the refresh token chain and ensure all descendants are revoked
         if (!string.IsNullOrEmpty(refreshToken.ReplacedByToken))
         {
-            var childToken = account.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken.ReplacedByToken);
+            var childToken = account.RefreshTokens.Single(x => x.Token == refreshToken.ReplacedByToken);
             if (childToken.IsActive)
                 RevokeRefreshToken(childToken, ipAddress, reason);
             else
