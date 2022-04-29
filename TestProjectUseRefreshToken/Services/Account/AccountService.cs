@@ -235,27 +235,6 @@ public class AccountService : IAccountService
         return _mapper.Map<AccountResponse>(account);
     }
 
-    public async Task<AccountResponse> UpdateAsync(Guid id, UpdateRequest model)
-    {
-        var account = await GetAccountAsync(id);
-
-        // validate
-        if (account.Email != model.Email && await _context.Accounts.AnyAsync(x => x.Email == model.Email))
-            throw new UserExistException($"Email '{model.Email}' is already registered");
-
-        // hash password if it was entered
-        if (!string.IsNullOrEmpty(model.Password))
-            account.PasswordHash = BCrypt.HashPassword(model.Password);
-
-        // copy model to account and save
-        _mapper.Map(model, account);
-        account.Updated = DateTime.UtcNow;
-        _context.Accounts.Update(account);
-        await _context.SaveChangesAsync();
-
-        return _mapper.Map<AccountResponse>(account);
-    }
-
     public async Task DeleteAsync(Guid id)
     {
         var account = await GetAccountAsync(id);

@@ -15,6 +15,5 @@ public interface IAccountService
     Task<IEnumerable<AccountResponse>> GetAllAsync();
     Task<AccountResponse> GetByIdAsync(Guid id);
     Task<AccountResponse> CreateAsync(CreateRequest model);
-    Task<AccountResponse> UpdateAsync(Guid id, UpdateRequest model);
     Task DeleteAsync(Guid id);
 }

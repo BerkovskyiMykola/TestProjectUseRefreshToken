@@ -213,34 +213,6 @@ namespace TestProjectUseRefreshToken.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<ActionResult<AccountResponse>> Update(Guid id, UpdateRequest model)
-        {
-            var authAccount = HttpContext.Items["Account"] as Account;
-            Guid accountId = authAccount!.Role == Role.Admin ? id : authAccount.Id;
-
-            // only admins can update role
-            if (authAccount!.Role != Role.Admin)
-            {
-                model.Role = "";
-            }
-
-            try
-            {
-                var account = await _accountService.UpdateAsync(id, model);
-                return Ok(account);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
