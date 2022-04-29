@@ -49,32 +49,27 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-
-    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "TestProjectUseRefreshToken", Version = "v1" });
+    var jwtSecurityScheme = new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
-        Name = "Authorization",
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = JwtBearerDefaults.AuthenticationScheme
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        Type = SecuritySchemeType.Http,
+        Description = "TestProjectUseRefreshToken",
+        Reference = new OpenApiReference
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = JwtBearerDefaults.AuthenticationScheme
-                }
-            },
-            Array.Empty<string>()
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
         }
+    };
+    options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtSecurityScheme, Array.Empty<string>() }
     });
 });
 
