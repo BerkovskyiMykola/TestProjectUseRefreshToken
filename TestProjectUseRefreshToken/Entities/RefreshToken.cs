@@ -3,8 +3,6 @@ namespace TestProjectUseRefreshToken.Entities;
 public class RefreshToken
 {
     public Guid Id { get; set; }
-    public Guid AccountId { get; set; }
-    public Account? Account { get; set; }
     public string Token { get; set; } = string.Empty;
     public DateTime Expires { get; set; }
     public DateTime Created { get; set; }
@@ -13,7 +11,12 @@ public class RefreshToken
     public string RevokedByIp { get; set; } = string.Empty;
     public string ReplacedByToken { get; set; } = string.Empty;
     public string ReasonRevoked { get; set; } = string.Empty;
+
+    public Guid AccountId { get; set; }
+    public Account? Account { get; set; }
+
+
     public bool IsExpired => DateTime.UtcNow >= Expires;
-    public bool IsRevoked => Revoked != null;
-    public bool IsActive => Revoked == null && !IsExpired;
+    public bool IsRevoked => Revoked is not null;
+    public bool IsActive => Revoked is null && !IsExpired;
 }

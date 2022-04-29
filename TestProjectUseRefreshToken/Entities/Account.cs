@@ -11,7 +11,6 @@ public class Account
     public Role Role { get; set; }
     public string VerificationToken { get; set; } = string.Empty;
     public DateTime? Verified { get; set; }
-    public bool IsVerified => Verified.HasValue || PasswordReset.HasValue;
     public string ResetToken { get; set; } = string.Empty;
     public DateTime? ResetTokenExpires { get; set; }
     public DateTime? PasswordReset { get; set; }
@@ -19,8 +18,11 @@ public class Account
     public DateTime? Updated { get; set; }
     public List<RefreshToken> RefreshTokens { get; set; } = new();
 
+
     public bool OwnsToken(string token) 
     {
-        return RefreshTokens?.Find(x => x.Token == token) != null;
+        return RefreshTokens.Find(x => x.Token == token) is not null;
     }
+
+    public bool IsVerified => Verified.HasValue || PasswordReset.HasValue;
 }
